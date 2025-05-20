@@ -116,7 +116,53 @@ server/
   }
   ```
 
-### 2. Root Endpoint
+### 2. User Login
+
+**Endpoint:** `POST /user/login`
+
+**Description:** Authenticates a user and returns a JWT token.
+
+**Request Body:**
+
+```json
+{
+  "email": "johndoe@example.com",
+  "password": "password123"
+}
+```
+
+**Validation Rules:**
+
+- `email` must be a valid email address.
+- `password` must be at least 6 characters long.
+
+**Response:**
+
+- **Success (200):**
+
+  ```json
+  {
+    "token": "jwt-token-here",
+    "user": {
+      "_id": "64f1c2e4b5d1c2e4b5d1c2e4",
+      "fullname": {
+        "firstname": "John",
+        "lastname": "Doe"
+      },
+      "email": "johndoe@example.com"
+    }
+  }
+  ```
+
+- **Error (401):**
+
+  ```json
+  {
+    "msg": "Invalid email or password"
+  }
+  ```
+
+### 3. Root Endpoint
 
 **Endpoint:** `GET /`
 
@@ -129,6 +175,20 @@ server/
   ```text
   hello
   ```
+
+## New Features
+
+1. **Password Hashing:**
+   - Passwords are hashed using `bcrypt` before being stored in the database for enhanced security.
+
+2. **JWT Authentication:**
+   - A JSON Web Token (JWT) is generated upon successful registration or login, allowing secure user authentication.
+
+3. **Input Validation:**
+   - Input validation is implemented using `express-validator` to ensure that user inputs meet the required criteria.
+
+4. **Error Handling:**
+   - Proper error handling is implemented to return meaningful error messages for invalid inputs or authentication failures.
 
 ## Technologies Used
 
@@ -165,7 +225,18 @@ server/
    }'
    ```
 
-4. You will receive a response with a JWT token and user details.
+4. Login a user:
+
+   ```bash
+   curl -X POST http://localhost:4000/user/login \
+   -H "Content-Type: application/json" \
+   -d '{
+     "email": "johndoe@example.com",
+     "password": "password123"
+   }'
+   ```
+
+5. You will receive a response with a JWT token and user details.
 
 ## License
 

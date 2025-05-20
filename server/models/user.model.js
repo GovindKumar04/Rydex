@@ -35,7 +35,7 @@ userSchema.methods.genrateAuthToken = function () {
   return token;
 }
 
-userSchema.methods.comparePassword = async () => {
+userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password)
 }
 
