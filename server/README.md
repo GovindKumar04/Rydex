@@ -1,11 +1,21 @@
-# Uber Backend
+# Rydex Backend
 
-This is the backend for the Uber-like application. It is built using Node.js, Express, and MongoDB. The backend provides APIs for user registration and authentication.
+Rydex is a backend application for an Uber-like service, built using **Node.js**, **Express**, and **MongoDB**. It provides APIs for user registration, authentication, and profile management.
+
+## Features
+
+1. **User Registration**: Allows users to register with their first name, last name, email, and password.
+2. **User Login**: Authenticates users and generates a JSON Web Token (JWT) for secure access.
+3. **User Profile**: Retrieves the authenticated user's profile.
+4. **Logout**: Logs out the user by blacklisting the token.
+5. **Password Hashing**: Ensures secure storage of user passwords using bcrypt.
+6. **JWT Authentication**: Provides secure access to protected routes using JWT.
+7. **Input Validation**: Validates user inputs using `express-validator`.
+8. **Token Blacklisting**: Implements token blacklisting for secure logout functionality.
 
 ## Project Structure
 
 ```
-.gitignore
 server/
     .env
     app.js
@@ -17,16 +27,29 @@ server/
         user.controller.js
     models/
         user.model.js
+        blacklistToken.model.js
     routes/
         user.routes.js
     services/
         user.services.js
+    middlewares/
+        auth.middleware.js
 ```
 
 ## Installation
 
-1. Clone the repository.
-2. Navigate to the `server` directory.
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/your-repo/rydex-backend.git
+   ```
+
+2. Navigate to the `server` directory:
+
+   ```bash
+   cd rydex-backend/server
+   ```
+
 3. Install dependencies:
 
    ```bash
@@ -35,10 +58,10 @@ server/
 
 4. Create a `.env` file in the `server` directory with the following content:
 
-   ```
+   ```env
    PORT=4000
-   MONGO_URL=mongodb://localhost:27017/uber
-   JWT_SECRET=jwt-secret-here
+   MONGO_URL=mongodb://localhost:27017/rydex
+   JWT_SECRET=your-jwt-secret
    ```
 
 5. Start the server:
@@ -82,7 +105,7 @@ server/
   {
     "token": "jwt-token-here",
     "user": {
-      "_id": "64f1c2e4b5d1c2e4b5d1c2e4",
+      "_id": "user-id",
       "fullname": {
         "firstname": "John",
         "lastname": "Doe"
@@ -144,7 +167,7 @@ server/
   {
     "token": "jwt-token-here",
     "user": {
-      "_id": "64f1c2e4b5d1c2e4b5d1c2e4",
+      "_id": "user-id",
       "fullname": {
         "firstname": "John",
         "lastname": "Doe"
@@ -162,33 +185,66 @@ server/
   }
   ```
 
-### 3. Root Endpoint
+### 3. Get User Profile
 
-**Endpoint:** `GET /`
+**Endpoint:** `GET /user/profile`
 
-**Description:** Returns a simple greeting message.
+**Description:** Retrieves the authenticated user's profile.
+
+**Headers:**
+
+- `Authorization: Bearer <jwt-token>`
 
 **Response:**
 
 - **Success (200):**
 
-  ```text
-  hello
+  ```json
+  {
+    "_id": "user-id",
+    "fullname": {
+      "firstname": "John",
+      "lastname": "Doe"
+    },
+    "email": "johndoe@example.com"
+  }
   ```
 
-## New Features
+- **Error (401):**
 
-1. **Password Hashing:**
-   - Passwords are hashed using `bcrypt` before being stored in the database for enhanced security.
+  ```json
+  {
+    "msg": "Unauthorized"
+  }
+  ```
 
-2. **JWT Authentication:**
-   - A JSON Web Token (JWT) is generated upon successful registration or login, allowing secure user authentication.
+### 4. Logout
 
-3. **Input Validation:**
-   - Input validation is implemented using `express-validator` to ensure that user inputs meet the required criteria.
+**Endpoint:** `GET /user/logout`
 
-4. **Error Handling:**
-   - Proper error handling is implemented to return meaningful error messages for invalid inputs or authentication failures.
+**Description:** Logs out the user by blacklisting the token.
+
+**Headers:**
+
+- `Authorization: Bearer <jwt-token>`
+
+**Response:**
+
+- **Success (200):**
+
+  ```json
+  {
+    "msg": "Logged out"
+  }
+  ```
+
+- **Error (401):**
+
+  ```json
+  {
+    "msg": "Unauthorized"
+  }
+  ```
 
 ## Technologies Used
 
@@ -236,7 +292,19 @@ server/
    }'
    ```
 
-5. You will receive a response with a JWT token and user details.
+5. Access the user profile:
+
+   ```bash
+   curl -X GET http://localhost:4000/user/profile \
+   -H "Authorization: Bearer <jwt-token>"
+   ```
+
+6. Logout the user:
+
+   ```bash
+   curl -X GET http://localhost:4000/user/logout \
+   -H "Authorization: Bearer <jwt-token>"
+   ```
 
 ## License
 
